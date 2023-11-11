@@ -6,6 +6,7 @@ import com.app.magicpostapi.models.User;
 import com.app.magicpostapi.repositories.GatheringPointRepository;
 import com.app.magicpostapi.repositories.TransactionPointRepository;
 import com.app.magicpostapi.repositories.UserRepository;
+import jakarta.annotation.Nonnull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class UserService {
     private final int defaultAccountLength = 10;
     private final int defaultPasswordLength = 10;
 
-    public User genaratedUser(Role role, String idBranch) {
+    public User genaratedUser(String username, String password, @Nonnull Role role, String idBranch) {
         User newUser = new User();
         String prefix = "";
         if (role == Role.ADMIN) prefix = "adm";
@@ -37,9 +38,13 @@ public class UserService {
         else if (role == Role.TELLERS) prefix = "tl";
         else if (role == Role.COORDINATOR) prefix = "cdn";
         else if (role == Role.SHIPPER) prefix = "shp";
+        if (password == null)
+            password = genarator.genaratedString(defaultPasswordLength);
+        if (username == null)
+            username = genarator.genaratedString(defaultAccountLength, prefix);
 
-        newUser.setUsername(genarator.genaratedString(defaultAccountLength, prefix));
-        newUser.setPassword(genarator.genaratedPassword(defaultPasswordLength));
+        newUser.setUsername(username);
+        newUser.setPassword(passwordEncoder.encode(password));
         newUser.setRole(role);
         newUser.setActive(false);
         if (idBranch.startsWith("GRP")) {
@@ -53,6 +58,8 @@ public class UserService {
             ));
             newUser.setGatheringPoint(null);
         } else throw new IllegalArgumentException();
+        userRepository.save(newUser);
+        newUser.setPassword(password);
         return newUser;
     }
 

@@ -60,7 +60,7 @@ public class TransactionPointService implements OfficeService {
     }
 
     public User newAccountWithTransactionId(Role role, String transactionId) {
-        return userService.saveUser(userService.genaratedUser(role, transactionId));
+        return userService.genaratedUser(null, null, role, transactionId);
     }
 
     public TransactionPoint findById(String id) {

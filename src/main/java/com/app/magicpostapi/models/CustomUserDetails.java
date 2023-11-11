@@ -1,6 +1,5 @@
 package com.app.magicpostapi.models;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,6 +11,14 @@ import java.util.List;
 @Data
 public class CustomUserDetails implements UserDetails {
     User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public CustomUserDetails(User user) {
         this.user = user;

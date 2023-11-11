@@ -77,14 +77,18 @@ public class UserController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'GATHERING_POINT_MANAGER', 'TRANSACTION_POINT_MANAGER')")
     @PostMapping("")
     ResponseEntity<ResponseObject> createUser(@RequestBody Map<String, String> reqBody) {
-        User newUser = userService.genaratedUser(Role.valueOf(reqBody.get("role")), reqBody.get("idBranch"));
         return new ResponseEntity<>(new ResponseObject(
                 "200",
                 "Create successful",
-                newUser
+                userService.genaratedUser(reqBody.get("username"),
+                        reqBody.get("password"),
+                        Role.valueOf(reqBody.get("role")),
+                        reqBody.get("idBranch")
+                )
         ), HttpStatus.OK);
     }
-    
+
+
     @PutMapping("/{id}")
     ResponseEntity<ResponseObject> editUser(@RequestBody Map<String, String> reqBody, @PathVariable Long id) {
         return new ResponseEntity<>(new ResponseObject(

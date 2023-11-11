@@ -23,11 +23,11 @@ public class User {
     @Column(name = "role", nullable = false)
     private Role role;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_gathering_point", referencedColumnName = "id_gathering_point", unique = true)
+    @JoinColumn(name = "id_gathering_point", referencedColumnName = "id_gathering_point")
     @JsonIgnore
     private GatheringPoint gatheringPoint;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_transaction_point", referencedColumnName = "id_transaction_point", unique = true)
+    @JoinColumn(name = "id_transaction_point", referencedColumnName = "id_transaction_point")
     @JsonIgnore
     private TransactionPoint transactionPoint;
     @Column(name = "active", nullable = false)
@@ -51,6 +51,7 @@ public class User {
     public User() {
 
     }
+
 
     public Long getId() {
         return id;

@@ -38,7 +38,7 @@ public class GatheringPointService implements OfficeService {
     }
 
     public User newAccountWithGatheringId(Role role, String transactionId) {
-        return userService.saveUser(userService.genaratedUser(role, transactionId));
+        return userService.genaratedUser(null, null, role, transactionId);
     }
 
     public GatheringPoint findById(String id) {

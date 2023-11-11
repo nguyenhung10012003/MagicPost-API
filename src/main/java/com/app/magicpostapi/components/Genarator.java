@@ -8,11 +8,10 @@ import java.util.Random;
 
 @Component
 public class Genarator {
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     private final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     public String genaratedString(int length) {
         StringBuilder randomString = new StringBuilder();
