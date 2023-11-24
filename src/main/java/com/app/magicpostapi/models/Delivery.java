@@ -1,29 +1,30 @@
 package com.app.magicpostapi.models;
 
-import com.app.magicpostapi.components.DeliveryStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.Date;
 
 @Entity
+@Data
 @Table(name = "delivery")
 public class Delivery {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id_delivery")
+    @Column(name = "delivery_id")
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lading_code", referencedColumnName = "lading_code", nullable = false)
+    @ManyToOne()
+    @JoinColumn(name = "order_id", referencedColumnName = "id_order", nullable = false)
     @JsonIgnore
     private Order order;
-    @Column(name = "present_destination")
+    @Column(name = "present_des", nullable = false)
     private String presentDes;
-    @Column(name = "next_destination")
+    @Column(name = "next_des", nullable = false)
     private String nextDes;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private DeliveryStatus deliveryStatus;
+    @Column(name = "isShipped")
+    private boolean isShipped;
     @Column(name = "date_created", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreated;
@@ -33,24 +34,15 @@ public class Delivery {
         dateCreated = new Date(System.currentTimeMillis());
     }
 
-    public Delivery() {
-    }
-
-    public Delivery(Long id, Order order, String presentDes, String nextDes, DeliveryStatus deliveryStatus, Date dateCreated) {
+    public void setId(Long id) {
         this.id = id;
-        this.order = order;
-        this.presentDes = presentDes;
-        this.nextDes = nextDes;
-        this.deliveryStatus = deliveryStatus;
-        this.dateCreated = dateCreated;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Delivery() {
     }
 
     public Order getOrder() {
@@ -77,21 +69,11 @@ public class Delivery {
         this.nextDes = nextDes;
     }
 
-    public DeliveryStatus getDeliveryStatus() {
-        return deliveryStatus;
+    public boolean isShipped() {
+        return isShipped;
     }
 
-    public void setDeliveryStatus(DeliveryStatus deliveryStatus) {
-        this.deliveryStatus = deliveryStatus;
+    public void setShipped(boolean shipped) {
+        isShipped = shipped;
     }
-
-    public Date getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(Date dateCreated) {
-        this.dateCreated = dateCreated;
-    }
-
-
 }

@@ -46,7 +46,7 @@ public class AuthenticationService {
         String refreshToken = jwtService.generateRefreshToken(userFound);
         revokeAllUserTokens(userFound.getUser());
         saveUserToken(userFound.getUser(), jwtToken);
-        return new AuthenticationResponse(jwtToken, refreshToken);
+        return new AuthenticationResponse(jwtToken, refreshToken, userFound.getUser().getRole());
     }
 
     private void saveUserToken(User user, String jwtToken) {
@@ -89,7 +89,7 @@ public class AuthenticationService {
                 var accessToken = jwtService.generateToken(user);
                 revokeAllUserTokens(user.getUser());
                 saveUserToken(user.getUser(), accessToken);
-                AuthenticationResponse authResponse = new AuthenticationResponse(accessToken, refreshToken);
+                AuthenticationResponse authResponse = new AuthenticationResponse(accessToken, refreshToken, user.getUser().getRole());
                 new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
             }
         }

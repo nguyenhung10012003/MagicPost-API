@@ -87,6 +87,19 @@ public class OrderController {
         ), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyAuthority('GATHERING_POINT_MANAGER', 'ADMIN', 'TELLERS')")
+    @GetMapping("/statistic/gathering/{id}")
+    ResponseEntity<ResponseObject> gatheringStatistic(
+            @RequestParam @Nonnull @DateTimeFormat(pattern = "yyyy-MM-dd") Date from,
+            @RequestParam @Nonnull @DateTimeFormat(pattern = "yyyy-MM-dd") Date to,
+            @PathVariable String id) {
+        return new ResponseEntity<>(new ResponseObject(
+                "200",
+                "Find successfully",
+                deliveryService.gatheringStatistic(id, from, to)
+        ), HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping("/count")
     ResponseEntity<ResponseObject> countOrder(
@@ -114,6 +127,19 @@ public class OrderController {
         ), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'COORDINATOR', 'GATHERING_POINT_MANAGER')")
+    @GetMapping("/count/gathering/{id}")
+    ResponseEntity<ResponseObject> gatheringCountOrder(
+            @RequestParam @Nonnull @DateTimeFormat(pattern = "yyyy-MM-dd") Date from,
+            @RequestParam @Nonnull @DateTimeFormat(pattern = "yyyy-MM-dd") Date to,
+            @PathVariable @Nonnull String id
+    ) {
+        return new ResponseEntity<>(new ResponseObject(
+                "200",
+                "Count successfully!"
+        ), HttpStatus.OK);
+    }
+
     @PostMapping("/delivery")
     ResponseEntity<ResponseObject> confirmOrderLeft(
             @RequestBody List<Map<String, String>> deliveries
@@ -121,8 +147,27 @@ public class OrderController {
         return new ResponseEntity<>(new ResponseObject(
                 "200",
                 "Insert successfully",
-                deliveryService.insertDeliveries(deliveries)
+                deliveryService.newDeliveries(deliveries)
         ), HttpStatus.OK);
     }
 
+    @PutMapping("/delivery")
+    ResponseEntity<ResponseObject> confirmOrderReceived(
+            @RequestBody List<String> deliveryIds
+    ) {
+        return new ResponseEntity<>(new ResponseObject(
+                "200",
+                "Update successfully",
+                deliveryService.confirmOrderReceived(deliveryIds)
+        ), HttpStatus.OK);
+    }
+
+    @GetMapping("/search/{ladingCode}")
+    ResponseEntity<ResponseObject> searchOrder(@PathVariable String ladingCode) {
+        return new ResponseEntity<>(new ResponseObject(
+                "200",
+                "Find successfully",
+                deliveryService.searchOrder(ladingCode)
+        ), HttpStatus.OK);
+    }
 }

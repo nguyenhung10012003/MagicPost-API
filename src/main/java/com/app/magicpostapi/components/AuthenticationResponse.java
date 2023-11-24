@@ -8,9 +8,12 @@ public class AuthenticationResponse {
     private String accessToken;
     @JsonProperty("refreshToken")
     private String refreshToken;
+    @JsonProperty("role")
+    private String role;
 
-    public AuthenticationResponse(String accessToken, String refreshToken) {
+    public AuthenticationResponse(String accessToken, String refreshToken, String role) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
+        this.role = role;
     }
 }

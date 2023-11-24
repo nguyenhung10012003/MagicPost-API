@@ -26,4 +26,5 @@ public class HomeController {
                 authenticationService.authenticate(user)
         ), HttpStatus.OK);
     }
+
 }

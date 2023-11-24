@@ -4,7 +4,6 @@ import com.app.magicpostapi.components.Genarator;
 import com.app.magicpostapi.components.OrderStatus;
 import com.app.magicpostapi.models.Order;
 import com.app.magicpostapi.models.TransactionPoint;
-import com.app.magicpostapi.repositories.DeliveryRepository;
 import com.app.magicpostapi.repositories.OrderRepository;
 import com.app.magicpostapi.repositories.TransactionPointRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,6 @@ import java.util.Map;
 public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
-    @Autowired
-    private DeliveryRepository deliveryRepository;
     @Autowired
     private TransactionPointRepository transactionPointRepository;
     @Autowired
