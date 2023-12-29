@@ -11,6 +11,7 @@ import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class GatheringPointController {
     @Autowired
     UserService userService;
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'GATHERING_POINT_MANAGER', 'COORDINATOR')")
     @GetMapping("")
     ResponseEntity<ResponseObject> getAllGatheringPoint() {
         return new ResponseEntity<>(new ResponseObject(
@@ -36,9 +38,9 @@ public class GatheringPointController {
     @PostMapping("")
     ResponseEntity<ResponseObject> newGatheringPoint(@RequestBody Map<String, String> data) {
         class GatheringPointWithAccount {
-            @JsonProperty("Gathering Point")
+            @JsonProperty("gatheringPoint")
             final GatheringPoint gatheringPoint;
-            @JsonProperty("User")
+            @JsonProperty("user")
             final User user;
 
             public GatheringPointWithAccount(GatheringPoint gatheringPoint, User user) {

@@ -30,13 +30,18 @@ public class TransactionPoint {
     private String city;
     @Column(name = "name")
     private String name;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "id_gathering_point")
-    @JsonIgnore
     private GatheringPoint gatheringPoint;
     @OneToMany(mappedBy = "transactionPoint", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<User> users;
+    @OneToMany(mappedBy = "transactionPointFrom", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Order> orderSend;
+    @OneToMany(mappedBy = "transactionPointTo", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Order> orderReceive;
 
     public String getId() {
         return id;

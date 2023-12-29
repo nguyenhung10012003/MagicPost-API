@@ -1,6 +1,7 @@
 package com.app.magicpostapi.controllers;
 
 import com.app.magicpostapi.components.Role;
+import com.app.magicpostapi.models.ErrorObject;
 import com.app.magicpostapi.models.ResponseObject;
 import com.app.magicpostapi.models.User;
 import com.app.magicpostapi.repositories.UserRepository;
@@ -76,7 +77,12 @@ public class UserController {
      */
     @PreAuthorize("hasAnyAuthority('ADMIN', 'GATHERING_POINT_MANAGER', 'TRANSACTION_POINT_MANAGER')")
     @PostMapping("")
-    ResponseEntity<ResponseObject> createUser(@RequestBody Map<String, String> reqBody) {
+    ResponseEntity<Object> createUser(@RequestBody Map<String, String> reqBody) {
+        if (Role.valueOf(reqBody.get("role")) == Role.ADMIN)
+            return new ResponseEntity<>(new ErrorObject(
+                    HttpStatus.EXPECTATION_FAILED,
+                    "Can not create user with role admin"
+            ), HttpStatus.EXPECTATION_FAILED);
         return new ResponseEntity<>(new ResponseObject(
                 "200",
                 "Create successful",

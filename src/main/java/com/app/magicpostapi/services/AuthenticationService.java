@@ -46,6 +46,12 @@ public class AuthenticationService {
         String refreshToken = jwtService.generateRefreshToken(userFound);
         revokeAllUserTokens(userFound.getUser());
         saveUserToken(userFound.getUser(), jwtToken);
+        if (userFound.getUser().getGatheringPoint() != null)
+            return new AuthenticationResponse(jwtToken, refreshToken, userFound.getUser().getRole(),
+                    userFound.getUser().getGatheringPoint().getId());
+        else if (userFound.getUser().getTransactionPoint() != null)
+            return new AuthenticationResponse(jwtToken, refreshToken, userFound.getUser().getRole(),
+                    userFound.getUser().getTransactionPoint().getId());
         return new AuthenticationResponse(jwtToken, refreshToken, userFound.getUser().getRole());
     }
 

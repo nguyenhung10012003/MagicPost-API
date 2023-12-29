@@ -25,7 +25,7 @@ public class TransactionPointController {
     @Autowired
     UserService userService;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'TRANSACTION_POINT_MANAGER', 'TELLERS')")
     @GetMapping("")
     ResponseEntity<ResponseObject> getAllTransactionPoint() {
         return new ResponseEntity<>(

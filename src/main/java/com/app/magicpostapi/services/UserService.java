@@ -47,17 +47,19 @@ public class UserService {
         newUser.setPassword(passwordEncoder.encode(password));
         newUser.setRole(role);
         newUser.setActive(false);
-        if (idBranch.startsWith("GRP")) {
-            newUser.setGatheringPoint(gatheringPointRepository.findById(idBranch).orElseThrow(
-                    () -> new IllegalArgumentException("Gathering Point not found")
-            ));
-            newUser.setTransactionPoint(null);
-        } else if (idBranch.startsWith("TSP")) {
-            newUser.setTransactionPoint(transactionPointRepository.findById(idBranch).orElseThrow(
-                    () -> new IllegalArgumentException("Transaction Point not found")
-            ));
-            newUser.setGatheringPoint(null);
-        } else throw new IllegalArgumentException();
+        if (idBranch != null) {
+            if (idBranch.startsWith("GRP")) {
+                newUser.setGatheringPoint(gatheringPointRepository.findById(idBranch).orElseThrow(
+                        () -> new IllegalArgumentException("Gathering Point not found")
+                ));
+                newUser.setTransactionPoint(null);
+            } else if (idBranch.startsWith("TSP")) {
+                newUser.setTransactionPoint(transactionPointRepository.findById(idBranch).orElseThrow(
+                        () -> new IllegalArgumentException("Transaction Point not found")
+                ));
+                newUser.setGatheringPoint(null);
+            }
+        }
         userRepository.save(newUser);
         newUser.setPassword(password);
         return newUser;

@@ -47,8 +47,56 @@ public class OrderController {
     }
 
     @PreAuthorize("hasAnyAuthority('TRANSACTION_POINT_MANAGER', 'ADMIN', 'TELLERS')")
+    @PutMapping("")
+    ResponseEntity<ResponseObject> editOrder(@RequestBody List<Map<String, String>> reqBody) {
+        return new ResponseEntity<>(new ResponseObject(
+                "200",
+                "Create successfully",
+                orderService.editOrder(reqBody)
+        ), HttpStatus.OK);
+    }
+
+    /**
+     * Điểm giao dịch xác nhận các đơn hàng chuyển đến điểm tập kết
+     *
+     * @param orderIds
+     * @param idTransactionPoint
+     * @return
+     */
+    @PreAuthorize("hasAnyAuthority('TRANSACTION_POINT_MANAGER', 'ADMIN', 'TELLERS')")
+    @PostMapping("/send/{idTransactionPoint}")
+    ResponseEntity<ResponseObject> tellersConfirmSendOrders(
+            @RequestBody List<Long> orderIds,
+            @PathVariable String idTransactionPoint) {
+        return new ResponseEntity<>(new ResponseObject(
+                "200",
+                "Order sent",
+                orderService.sendOrderToGrp(idTransactionPoint, orderIds)
+        ), HttpStatus.OK);
+    }
+
+    /**
+     * Điểm giao dịch xác nhận các đơn hàng được chuyển tới điểm giao dịch đích
+     *
+     * @param orderIds
+     * @param idTransactionPoint
+     * @return
+     */
+    @PreAuthorize("hasAnyAuthority('TRANSACTION_POINT_MANAGER', 'ADMIN', 'TELLERS')")
+    @PostMapping("/receive/{idTransactionPoint}")
+    ResponseEntity<ResponseObject> tellersConfirmReceiveOrders(
+            @RequestBody List<Long> orderIds,
+            @PathVariable String idTransactionPoint) {
+        return new ResponseEntity<>(new ResponseObject(
+                "200",
+                "Order sent",
+                orderService.transactionReceiveOrder(idTransactionPoint, orderIds)
+        ), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAnyAuthority('TRANSACTION_POINT_MANAGER', 'ADMIN', 'TELLERS')")
     @GetMapping("/statistic")
-    ResponseEntity<ResponseObject> statisticOrderByStatusAndMonth(
+    ResponseEntity<ResponseObject> statisticOrderByDateRange(
             @RequestParam @Nullable String status,
             @RequestParam @Nullable @DateTimeFormat(pattern = "yyyy-MM-dd") Date from,
             @RequestParam @Nullable @DateTimeFormat(pattern = "yyyy-MM-dd") Date to
@@ -56,7 +104,7 @@ public class OrderController {
         return new ResponseEntity<>(new ResponseObject(
                 "200",
                 "Find successfully",
-                orderService.statisticOrder(status, from, to)
+                orderService.statisticOrder(from, to)
         ), HttpStatus.OK);
     }
 
@@ -87,7 +135,7 @@ public class OrderController {
         ), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyAuthority('GATHERING_POINT_MANAGER', 'ADMIN', 'TELLERS')")
+    @PreAuthorize("hasAnyAuthority('GATHERING_POINT_MANAGER', 'ADMIN', 'COORDINATOR')")
     @GetMapping("/statistic/gathering/{id}")
     ResponseEntity<ResponseObject> gatheringStatistic(
             @RequestParam @Nonnull @DateTimeFormat(pattern = "yyyy-MM-dd") Date from,
@@ -96,13 +144,20 @@ public class OrderController {
         return new ResponseEntity<>(new ResponseObject(
                 "200",
                 "Find successfully",
-                deliveryService.gatheringStatistic(id, from, to)
+                deliveryService.gatheringStatistic(id)
         ), HttpStatus.OK);
     }
 
+    /**
+     * Đếm số lượng đơn hàng toàn quốc phân theo trạng thái đơn hàng
+     *
+     * @param from ngày bắt đầu
+     * @param to   ngày kết thúc
+     * @return
+     */
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping("/count")
-    ResponseEntity<ResponseObject> countOrder(
+    ResponseEntity<ResponseObject> countAllOrder(
             @RequestParam @Nonnull @DateTimeFormat(pattern = "yyyy-MM-dd") Date from,
             @RequestParam @Nonnull @DateTimeFormat(pattern = "yyyy-MM-dd") Date to
     ) {
@@ -113,6 +168,27 @@ public class OrderController {
         ), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @GetMapping("/count/day")
+    ResponseEntity<ResponseObject> countAllOrderEveryDay(
+            @RequestParam @Nonnull @DateTimeFormat(pattern = "yyyy-MM-dd") Date from,
+            @RequestParam @Nonnull @DateTimeFormat(pattern = "yyyy-MM-dd") Date to
+    ) {
+        return new ResponseEntity<>(new ResponseObject(
+                "200",
+                "Count successfully",
+                orderService.countOrderEveryDay(from, to)
+        ), HttpStatus.OK);
+    }
+
+    /**
+     * Đếm số lượng đơn hàng phân theo trạng thái đơn hàng tại một điểm giao dịch
+     *
+     * @param from ngày bắt đầu
+     * @param to   ngày kết thúc
+     * @param id   id của điểm giao dịch
+     * @return
+     */
     @PreAuthorize("hasAnyAuthority('ADMIN', 'TELLERS', 'TRANSACTION_POINT_MANAGER')")
     @GetMapping("/count/transaction/{id}")
     ResponseEntity<ResponseObject> transactionCountOrder(
@@ -127,6 +203,42 @@ public class OrderController {
         ), HttpStatus.OK);
     }
 
+    /**
+     * Đếm số lượng đơn hàng từng ngày, phân theo trạng thái đơn hàng của 1 điểm giao dịch
+     *
+     * @param from ngày bắt đầu
+     * @param to   ngày kết thúc
+     * @param id   id của điểm giao dịch
+     * @return
+     */
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'TELLERS', 'TRANSACTION_POINT_MANAGER')")
+    @GetMapping("/count/day/transaction/{id}")
+    ResponseEntity<ResponseObject> transactionCountOrderEveryDay(
+            @RequestParam @Nonnull @DateTimeFormat(pattern = "yyyy-MM-dd") Date from,
+            @RequestParam @Nonnull @DateTimeFormat(pattern = "yyyy-MM-dd") Date to,
+            @PathVariable @Nonnull String id
+    ) {
+        return new ResponseEntity<>(new ResponseObject(
+                "200",
+                "Count successfully",
+                orderService.transactionCountOrderEveryDay(id, from, to)
+        ), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'TELLERS', 'TRANSACTION_POINT_MANAGER')")
+    @GetMapping("/count/transaction")
+    ResponseEntity<ResponseObject> countOrder(
+            @RequestParam @Nonnull @DateTimeFormat(pattern = "yyyy-MM-dd") Date from,
+            @RequestParam @Nonnull @DateTimeFormat(pattern = "yyyy-MM-dd") Date to
+    ) {
+        return new ResponseEntity<>(new ResponseObject(
+                "200",
+                "Count successfully",
+                orderService.countAllTransactionOrder(from, to)
+
+        ), HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAnyAuthority('ADMIN', 'COORDINATOR', 'GATHERING_POINT_MANAGER')")
     @GetMapping("/count/gathering/{id}")
     ResponseEntity<ResponseObject> gatheringCountOrder(
@@ -136,7 +248,35 @@ public class OrderController {
     ) {
         return new ResponseEntity<>(new ResponseObject(
                 "200",
-                "Count successfully!"
+                "Count successfully!",
+                deliveryService.gatheringCountOrder(id, from, to)
+        ), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'COORDINATOR', 'GATHERING_POINT_MANAGER')")
+    @GetMapping("/count/day/gathering/{id}")
+    ResponseEntity<ResponseObject> gatheringCountOrderEveryDay(
+            @RequestParam @Nonnull @DateTimeFormat(pattern = "yyyy-MM-dd") Date from,
+            @RequestParam @Nonnull @DateTimeFormat(pattern = "yyyy-MM-dd") Date to,
+            @PathVariable @Nonnull String id
+    ) {
+        return new ResponseEntity<>(new ResponseObject(
+                "200",
+                "Count successfully!",
+                deliveryService.gatheringCountOrderEveryDay(id, from, to)
+        ), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'COORDINATOR', 'GATHERING_POINT_MANAGER')")
+    @GetMapping("/count/gathering")
+    ResponseEntity<ResponseObject> gatheringCountOrder(
+            @RequestParam @Nonnull @DateTimeFormat(pattern = "yyyy-MM-dd") Date from,
+            @RequestParam @Nonnull @DateTimeFormat(pattern = "yyyy-MM-dd") Date to
+    ) {
+        return new ResponseEntity<>(new ResponseObject(
+                "200",
+                "Count successfully!",
+                deliveryService.countAllGatheringOrder(from, to)
         ), HttpStatus.OK);
     }
 
@@ -152,22 +292,27 @@ public class OrderController {
     }
 
     @PutMapping("/delivery")
-    ResponseEntity<ResponseObject> confirmOrderReceived(
-            @RequestBody List<String> deliveryIds
+    ResponseEntity<ResponseObject> updateDeliveries(
+            @RequestBody List<Map<String, String>> deliveries
     ) {
         return new ResponseEntity<>(new ResponseObject(
                 "200",
                 "Update successfully",
-                deliveryService.confirmOrderReceived(deliveryIds)
+                deliveryService.updateDeliveries(deliveries)
         ), HttpStatus.OK);
     }
 
-    @GetMapping("/search/{ladingCode}")
-    ResponseEntity<ResponseObject> searchOrder(@PathVariable String ladingCode) {
+    @GetMapping("deliveryfollowing/{id}")
+    ResponseEntity<ResponseObject> coordinatorGetDelivery(
+            @RequestParam @Nonnull @DateTimeFormat(pattern = "yyyy-MM-dd") Date from,
+            @RequestParam @Nonnull @DateTimeFormat(pattern = "yyyy-MM-dd") Date to,
+            @PathVariable String id
+    ) {
         return new ResponseEntity<>(new ResponseObject(
                 "200",
-                "Find successfully",
-                deliveryService.searchOrder(ladingCode)
+                "Get successful",
+                deliveryService.getIncomingAndStockDelivery(id, from, to)
         ), HttpStatus.OK);
     }
+
 }

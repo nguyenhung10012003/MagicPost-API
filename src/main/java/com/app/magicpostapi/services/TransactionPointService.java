@@ -4,6 +4,7 @@ import com.app.magicpostapi.components.Role;
 import com.app.magicpostapi.models.GatheringPoint;
 import com.app.magicpostapi.models.TransactionPoint;
 import com.app.magicpostapi.models.User;
+import com.app.magicpostapi.repositories.GatheringPointRepository;
 import com.app.magicpostapi.repositories.TransactionPointRepository;
 import com.app.magicpostapi.repositories.UserRepository;
 import jakarta.persistence.EntityManager;
@@ -25,6 +26,8 @@ public class TransactionPointService implements OfficeService {
     GatheringPointService gatheringPointService;
     @Autowired
     EntityManager entityManager;
+    @Autowired
+    GatheringPointRepository gatheringPointRepository;
 
     @Override
     public boolean checkOfficeExist(String officeId) {
@@ -66,6 +69,11 @@ public class TransactionPointService implements OfficeService {
     public TransactionPoint findById(String id) {
         return transactionPointRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Transaction Point not found"));
+    }
+
+    public List<TransactionPoint> getTransactionPointByGRP(String id) {
+        GatheringPoint gatheringPoint = gatheringPointRepository.findById(id).orElseThrow();
+        return transactionPointRepository.findByGatheringPoint(gatheringPoint);
     }
 
 }

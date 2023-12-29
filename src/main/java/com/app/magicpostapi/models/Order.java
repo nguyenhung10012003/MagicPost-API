@@ -8,8 +8,10 @@ import lombok.Data;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 @Entity
+@EntityListeners(value = OrderEntityListener.class)
 @Table(name = "orders")
 @Data
 public class Order {
@@ -55,6 +57,9 @@ public class Order {
     @Column(name = "charge")
     @Convert(converter = HashMapConverter.class)
     private Map<String, Integer> charge;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<OrderFollowing> orderFollowingSet;
 
     public Order(Long id, String senderName, String senderPhone, String senderAddress, String receiverName, String receiverPhone, String receiverAddress, String ladingCode, OrderStatus orderStatus, Date lastUpdate, Date dateCreated, TransactionPoint transactionPointFrom, TransactionPoint transactionPointTo, String tellersName, String note, Map<String, Integer> charge) {
         this.id = id;

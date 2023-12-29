@@ -37,6 +37,37 @@ public class GatheringPoint {
     @OneToMany(mappedBy = "gatheringPoint", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<User> users;
+    @OneToMany(mappedBy = "presentDes", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Delivery> sendDeliveries;
+    @OneToMany(mappedBy = "nextDes", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Delivery> receiveDeliveries;
+    @OneToMany(mappedBy = "from", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<DeliveryFollowing> deliveryFollowingFrom;
+    @OneToMany(mappedBy = "to", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<DeliveryFollowing> deliveryFollowingTo;
+    @OneToMany(mappedBy = "lastDes", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Delivery> lastDes;
+
+    public Set<Delivery> getSendDeliveries() {
+        return sendDeliveries;
+    }
+
+    public void setSendDeliveries(Set<Delivery> sendDeliveries) {
+        this.sendDeliveries = sendDeliveries;
+    }
+
+    public Set<Delivery> getReceiveDeliveries() {
+        return receiveDeliveries;
+    }
+
+    public void setReceiveDeliveries(Set<Delivery> receiveDeliveries) {
+        this.receiveDeliveries = receiveDeliveries;
+    }
 
     public Set<User> getUsers() {
         return users;
@@ -111,6 +142,20 @@ public class GatheringPoint {
         this.active = active;
         this.city = city;
         this.name = name;
+    }
+
+    public GatheringPoint(String id, String address, boolean active, String city, String name, Set<TransactionPoint> transactionPoints, Set<User> users, Set<Delivery> sendDeliveries, Set<Delivery> receiveDeliveries, Set<DeliveryFollowing> deliveryFollowingFrom, Set<DeliveryFollowing> deliveryFollowingTo) {
+        this.id = id;
+        this.address = address;
+        this.active = active;
+        this.city = city;
+        this.name = name;
+        this.transactionPoints = transactionPoints;
+        this.users = users;
+        this.sendDeliveries = sendDeliveries;
+        this.receiveDeliveries = receiveDeliveries;
+        this.deliveryFollowingFrom = deliveryFollowingFrom;
+        this.deliveryFollowingTo = deliveryFollowingTo;
     }
 
     public GatheringPoint(String id, String address, boolean active, String city) {

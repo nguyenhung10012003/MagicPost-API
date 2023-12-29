@@ -1,9 +1,11 @@
 package com.app.magicpostapi.controllers;
 
 import com.app.magicpostapi.models.ErrorObject;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -35,6 +37,24 @@ public class ExceptionHandlingController extends ResponseEntityExceptionHandler 
         return new ResponseEntity<>(new ErrorObject(
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 e.getMessage()), HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    ResponseEntity<Object> handleUsernameNotFoundException(UsernameNotFoundException e, WebRequest request) {
+        e.printStackTrace(System.out);
+        return new ResponseEntity<>(new ErrorObject(
+                HttpStatus.NOT_FOUND,
+                e.getMessage()
+        ), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    ResponseEntity<Object> handleExpiredJwtException(ExpiredJwtException e, WebRequest request) {
+        e.printStackTrace(System.out);
+        return new ResponseEntity<>(new ErrorObject(
+                HttpStatus.UNAUTHORIZED,
+                e.getMessage()
+        ), HttpStatus.UNAUTHORIZED);
     }
 
 }

@@ -14,4 +14,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByGatheringPoint_Id(String gatheringPointId);
 
     List<User> findByTransactionPoint_Id(String gatheringPointId);
+
+    boolean existsByUsername(String username);
 }

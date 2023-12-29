@@ -10,23 +10,27 @@ import java.util.Date;
 @Table(name = "delivery_following")
 public class DeliveryFollowing {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id_delivery")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lading_code", referencedColumnName = "lading_code", nullable = false)
+    @JoinColumn(name = "delivery_id", referencedColumnName = "delivery_id")
     @JsonIgnore
-    private Order order;
-    @Column(name = "present_destination")
-    private String presentDes;
-    @Column(name = "next_destination")
-    private String nextDes;
+    private Delivery delivery;
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private DeliveryStatus deliveryStatus;
-    @Column(name = "date_created", nullable = false)
+    @Column(name = "date_created")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreated;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fromGathering", referencedColumnName = "id_gathering_point")
+    @JsonIgnore
+    private GatheringPoint from;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "toGathering", referencedColumnName = "id_gathering_point")
+    @JsonIgnore
+    private GatheringPoint to;
 
     @PrePersist
     protected void onInsert() {
@@ -36,14 +40,6 @@ public class DeliveryFollowing {
     public DeliveryFollowing() {
     }
 
-    public DeliveryFollowing(Long id, Order order, String presentDes, String nextDes, DeliveryStatus deliveryStatus, Date dateCreated) {
-        this.id = id;
-        this.order = order;
-        this.presentDes = presentDes;
-        this.nextDes = nextDes;
-        this.deliveryStatus = deliveryStatus;
-        this.dateCreated = dateCreated;
-    }
 
     public Long getId() {
         return id;
@@ -53,32 +49,47 @@ public class DeliveryFollowing {
         this.id = id;
     }
 
-    public Order getOrder() {
-        return order;
+    public GatheringPoint getFrom() {
+        return from;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setFrom(GatheringPoint from) {
+        this.from = from;
     }
 
-    public String getPresentDes() {
-        return presentDes;
+    public GatheringPoint getTo() {
+        return to;
     }
 
-    public void setPresentDes(String presentDes) {
-        this.presentDes = presentDes;
+    public void setTo(GatheringPoint to) {
+        this.to = to;
     }
 
-    public String getNextDes() {
-        return nextDes;
+    public DeliveryFollowing(Long id, Delivery delivery, DeliveryStatus deliveryStatus, Date dateCreated, GatheringPoint from, GatheringPoint to) {
+        this.id = id;
+        this.delivery = delivery;
+        this.deliveryStatus = deliveryStatus;
+        this.dateCreated = dateCreated;
+        this.from = from;
+        this.to = to;
     }
 
-    public void setNextDes(String nextDes) {
-        this.nextDes = nextDes;
+    public DeliveryFollowing(Long id, DeliveryStatus deliveryStatus, Date dateCreated) {
+        this.id = id;
+        this.deliveryStatus = deliveryStatus;
+        this.dateCreated = dateCreated;
     }
 
     public DeliveryStatus getDeliveryStatus() {
         return deliveryStatus;
+    }
+
+    public Delivery getDelivery() {
+        return delivery;
+    }
+
+    public void setDelivery(Delivery delivery) {
+        this.delivery = delivery;
     }
 
     public void setDeliveryStatus(DeliveryStatus deliveryStatus) {

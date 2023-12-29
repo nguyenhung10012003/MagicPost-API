@@ -12,12 +12,12 @@ import lombok.Data;
 @AllArgsConstructor
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_account", unique = true)
     private Long id;
-    @Column(name = "username", nullable = false, unique = true, length = 24)
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
-    @Column(name = "password", nullable = false, unique = true, length = 24)
+    @Column(name = "password", nullable = false, unique = true)
     private String password;
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
@@ -55,6 +55,10 @@ public class User {
 
     public Long getId() {
         return id;
+    }
+
+    public GatheringPoint getGatheringPoint() {
+        return gatheringPoint;
     }
 
     public void setId(Long id) {

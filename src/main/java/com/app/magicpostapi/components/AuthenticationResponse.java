@@ -10,10 +10,19 @@ public class AuthenticationResponse {
     private String refreshToken;
     @JsonProperty("role")
     private String role;
+    @JsonProperty("idBranch")
+    private String idBranch;
 
     public AuthenticationResponse(String accessToken, String refreshToken, String role) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.role = role;
+    }
+
+    public AuthenticationResponse(String accessToken, String refreshToken, String role, String idBranch) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+        this.role = role;
+        this.idBranch = idBranch;
     }
 }
